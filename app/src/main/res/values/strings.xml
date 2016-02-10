@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">News Article Search</string>
+    <string name="action_settings">Settings</string>
+    <string name="search">Search</string>
+    <string name="search_hint">Enter search keyword</string>
+    <string name="article_text">Latest News</string>
+</resources>
