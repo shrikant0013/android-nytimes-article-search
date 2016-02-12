@@ -12,7 +12,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:showIn="@layout/activity_search"
         tools:context="com.shrikant.nytimesarticlesearch.SearchActivity">
-
+<!--
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -33,13 +33,15 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
 
+            android:layout_below="@+id/btSearch"
+-->
+
     <GridView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/gvArticles"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/btSearch"
         android:layout_centerHorizontal="true"
         android:numColumns="4"/>
 

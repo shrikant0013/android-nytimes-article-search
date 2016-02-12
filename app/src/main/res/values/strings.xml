@@ -4,4 +4,21 @@
     <string name="search">Search</string>
     <string name="search_hint">Enter search keyword</string>
     <string name="article_text">Latest News</string>
+    <string name="search_filter">Filter</string>
+    <string name="title_activity_fragment_search_filter">"Search Filter "</string>
+    <string name="due_date">Begin Date</string>
+    <string name="begin_date">Begin Date</string>
+    <string name="sort_order">Sort Order</string>
+    <string name="news_desk_values">News Desk Values</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_save">Save</string>
+    <string name="checkbox_sports">Sports</string>
+    <string name="checkbox_fashion_and_style"><![CDATA[Fashion & Style]]></string>
+    <string name="checkbox_arts">Arts</string>
+
+    <string-array name="sortorder_array">
+        <item>Oldest</item>
+        <item>Newest</item>
+    </string-array>
+
 </resources>
