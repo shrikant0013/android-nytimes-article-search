@@ -12,16 +12,17 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.GridView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.Bind;
@@ -34,35 +35,55 @@ public class SearchActivity extends AppCompatActivity {
             "http://api.nytimes.com/svc/search/v2/articlesearch.json";
     public final static String API_KEY = "api-key";
     public final static String PAGE = "page";
+    public final static String NY_BEGIN_DATE = "begin_date";
+    public final static String NY_NEWS_DESK = "fq";
+    public final static String NY_SORT_ORDER = "sort";
     public final static String QUERY = "q";
     public final static String RESPONSE = "response";
     public final static String DOCS = "docs";
     public final static String WEB_URL = "web_url";
     private final static String KEY = "24c318449f40e9695d3ff025f7cf7ba1:11:54196591";
 
+    String cachedQueryString = "";
+
     ArrayList<Article> articles;
     ArticleAdapter articleAdapter;
 
     enum SortOrder {
-        NEWEST("Newest"), OLDEST("Oldest");
+        NEWEST("newest"), OLDEST("oldest");
 
-        SortOrder(String input) {
+        private String sortOrder;
+        SortOrder(String sortOrder) {
+            this.sortOrder = sortOrder;
+        }
+        public String getSortOrder() {
+            return sortOrder;
         }
     }
 
     enum NewsDesk {
-        ARTS, FASHION_AND_STYLE, SPORTS;
+        ARTS("Arts"), FASHION_AND_STYLE("Fashion & Style"), SPORTS("Sports");
+
+        private String newsDesk;
+        NewsDesk(String newsDesk) {
+            this.newsDesk = newsDesk;
+        }
+
+        public String getNewsDesk() { return newsDesk; }
     }
 
     public static class FilterAttributes {
-        static String beginDate =  "" + System.currentTimeMillis();
-        static SortOrder sortOder = SortOrder.NEWEST;
-        static List<NewsDesk> newsDesks = Arrays.asList(NewsDesk.SPORTS);
+        //YYYYMMDD
+        static String beginDate =  "";
+        static String beginDateDisplay =  "";
+        static SortOrder sortOrder = SortOrder.NEWEST;
+        static List<NewsDesk> newsDesks = new ArrayList<>();
     }
 
 //    @Bind(R.id.btSearch) Button searchButton;
 //    @Bind(R.id.etSearch) EditText searchEditText;
-    @Bind(R.id.gvArticles) GridView articlesGridView;
+    //@Bind(R.id.gvArticles) GridView articlesGridView;
+    @Bind(R.id.rvArticles) RecyclerView articlesRecyclerView;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
     @Override
@@ -72,35 +93,71 @@ public class SearchActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
+
         articles = new ArrayList<>();
         articleAdapter = new ArticleAdapter(this, articles);
-        articlesGridView.setAdapter(articleAdapter);
+
+        // First param is number of columns and second param is orientation i.e Vertical or Horizontal
+        StaggeredGridLayoutManager gridLayoutManager =
+                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+
+        articlesRecyclerView.addOnScrollListener(
+                new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+                    @Override
+                    public void onLoadMore(int page, int totalItemsCount) {
+                        // Triggered only when new data needs to be appended to the list
+                        // Add whatever code is needed to append new items to the bottom of the list
+                        customLoadMoreDataFromApi(page);
+                    }
+                });
+
+        //articlesGridView.setAdapter(articleAdapter);
+        articlesRecyclerView.setAdapter(articleAdapter);
+
+        // Set layout manager to position the items
+        // Attach the layout manager to the recycler view
+        articlesRecyclerView.setLayoutManager(gridLayoutManager);
     }
+
+    //TODO implement this
+    // Append more data into the adapter
+    // This method probably sends out a network request and appends new data items to your adapter.
+    public void customLoadMoreDataFromApi(int offset) {
+        offset = offset % 100;
+        Toast.makeText(this, "Loading more .. pages " + offset, Toast.LENGTH_SHORT).show();
+        // Send an API request to retrieve appropriate data using the offset value as a parameter.
+        // Deserialize API response and then construct new objects to append to the adapter
+        // Add the new objects to the data source for the adapter
+        //items.addAll(moreItems);
+        // For efficiency purposes, notify the adapter of only the elements that got changed
+        // curSize will equal to the index of the first element inserted because the list is 0-indexed
+        searchArticle(cachedQueryString, offset);
+        int curSize = articleAdapter.getItemCount();
+        articleAdapter.notifyItemRangeInserted(curSize, articles.size() - 1);
+    }
+
 
     //@OnClick(R.id.btSearch)
     //public void searchArticle(View view) {
-    public void searchArticle(String query) {
+    public void searchArticle(String query, int page) {
 
         Log.i("SEARCHACTIVITY", "beginDate: " + FilterAttributes.beginDate + "sortoder" +
-                FilterAttributes.sortOder.toString());
+                FilterAttributes.sortOrder.toString());
 
         for (NewsDesk n :  FilterAttributes.newsDesks) {
             Log.i("SEARCHACTIVITY", "News desk: " + n.toString());
         }
 
         //articles = new ArrayList<>();
-        articleAdapter.clear();
+        //articleAdapter.clear();
+
         //String searchText = searchEditText.getText().toString();
         String searchText = query;
 
         Log.i("SEARCHACTIVITY", "Search text: " + searchText);
 
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
-        RequestParams requestParams = new RequestParams();
-        requestParams.put(API_KEY, KEY);
-        requestParams.put(PAGE, 0);
-        requestParams.put(QUERY, searchText);
-
+        RequestParams requestParams = constructQueryRequestParams(searchText, page);
         asyncHttpClient.get(NYTIMES_URL, requestParams, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -110,10 +167,13 @@ public class SearchActivity extends AppCompatActivity {
                     JSONObject jsonResponseObject = response.optJSONObject(RESPONSE);
                     if (jsonResponseObject != null) {
                         JSONArray jsonDocsArray = jsonResponseObject.optJSONArray(DOCS);
-                        articleAdapter.addAll(Article.fromJSONArray(jsonDocsArray));
+                        //articles.clear();
+                        articles.addAll(Article.fromJSONArray(jsonDocsArray));
+                        Log.i("SEARCHACTIVITY", "articles found:" + articles.size());
+                        //articleAdapter.
                     }
                 }
-                //articleAdapter.notifyDataSetChanged();
+                articleAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -136,6 +196,7 @@ public class SearchActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 // perform query here
                 // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
                 // see https://code.google.com/p/android/issues/detail?id=24599
@@ -143,7 +204,10 @@ public class SearchActivity extends AppCompatActivity {
 //                Toast.makeText(getApplicationContext(), "Search entered: " + query,
 //                        Toast.LENGTH_LONG).show();
                 //showProgress();
-                searchArticle(query);
+                articles.clear();
+                articleAdapter.notifyDataSetChanged();
+                cachedQueryString = query;
+                searchArticle(query, 0);
                 //hideProgress();
                 searchView.clearFocus();
                 return true;
@@ -162,6 +226,8 @@ public class SearchActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+
+
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -190,5 +256,41 @@ public class SearchActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.i("SEARCHACTIVITY", "Starting back");
         Toast.makeText(this, "Back to activity", Toast.LENGTH_SHORT).show();
+    }
+
+    public RequestParams constructQueryRequestParams(String searchText, int pageNumber) {
+        RequestParams requestParams = new RequestParams();
+        requestParams.put(API_KEY, KEY);
+
+        if (!TextUtils.isEmpty(FilterAttributes.beginDate)) {
+            requestParams.put(NY_BEGIN_DATE, FilterAttributes.beginDate);
+        }
+
+        if (FilterAttributes.newsDesks.size() > 0) {
+            StringBuilder newsDeskBuilder = new StringBuilder();
+            newsDeskBuilder.append("news_desk:(");
+
+            if (FilterAttributes.newsDesks.size() > 1) {
+                for (int i = 0; i < FilterAttributes.newsDesks.size() - 1; i++) {
+                    newsDeskBuilder.append(FilterAttributes.newsDesks.get(i).getNewsDesk());
+                    newsDeskBuilder.append(" ");
+                }
+                newsDeskBuilder.append(FilterAttributes.newsDesks
+                        .get(FilterAttributes.newsDesks.size() - 1).getNewsDesk());
+            } else {
+                newsDeskBuilder.append(FilterAttributes.newsDesks.get(0).getNewsDesk());
+            }
+
+            newsDeskBuilder.append(")");
+            //news_desk:(
+            requestParams.put(NY_NEWS_DESK, newsDeskBuilder.toString());
+        }
+
+
+        requestParams.put(NY_SORT_ORDER, FilterAttributes.sortOrder.getSortOrder());
+        requestParams.put(PAGE, pageNumber);
+        requestParams.put(QUERY, searchText);
+
+        return requestParams;
     }
 }

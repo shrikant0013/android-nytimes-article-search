@@ -68,6 +68,7 @@ public class Article {
                 Log.e("JSON" ,"Exception in json parsing " + e.getMessage());
             }
         }
+        Log.i("Article", "" + results.size());
         return results;
     }
 }

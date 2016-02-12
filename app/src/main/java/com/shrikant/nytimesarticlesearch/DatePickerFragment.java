@@ -30,7 +30,8 @@ public class DatePickerFragment extends DialogFragment
     public void onDateSet(DatePicker view, int year, int month, int day) {
         month++;
         SearchFilterFragment f = (SearchFilterFragment) getTargetFragment();
-        f.fromDate(year + "/" + month + "/" + day);
+        //YYYYMMDD for begindate
+        f.fromDate(year, month, day);
 
         Log.i("Date Picker", "Date picker in action: " + year + "/" + month + "/" + day);
     }
