@@ -9,6 +9,7 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:paddingBottom="@dimen/activity_vertical_margin"
+        android:padding="2dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:showIn="@layout/activity_search"
         tools:context="com.shrikant.nytimesarticlesearch.SearchActivity">
@@ -51,6 +52,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvArticles"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="#ECEFF1"/>
 
 </RelativeLayout>

@@ -4,19 +4,11 @@
     android:layout_height="match_parent"
     android:padding="2dp">
 
-    <ImageView
-        android:id="@+id/ivArticle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher"
-        android:background="#FFFFFF"
-        android:adjustViewBounds="true"
-        android:scaleType="fitXY"/>
     <TextView
-        android:id="@+id/tvArticle"
+        android:id="@+id/tvArticleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:maxLines="2"
+        android:maxLines="4"
         android:ellipsize="end"
         android:text="@string/article_text"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"

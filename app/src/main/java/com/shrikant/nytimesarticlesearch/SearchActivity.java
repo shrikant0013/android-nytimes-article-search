@@ -51,7 +51,8 @@ public class SearchActivity extends AppCompatActivity {
     String cachedQueryString = "";
 
     ArrayList<Article> articles;
-    ArticleAdapter articleAdapter;
+    //ArticleAdapter articleAdapter;
+    ComplexRecyclerViewArticleAdapter mComplexRecyclerViewArticleAdapter;
 
     enum SortOrder {
         NEWEST("newest"), OLDEST("oldest");
@@ -84,9 +85,6 @@ public class SearchActivity extends AppCompatActivity {
         static List<NewsDesk> newsDesks = new ArrayList<>();
     }
 
-//    @Bind(R.id.btSearch) Button searchButton;
-//    @Bind(R.id.etSearch) EditText searchEditText;
-    //@Bind(R.id.gvArticles) GridView articlesGridView;
     @Bind(R.id.rvArticles) RecyclerView articlesRecyclerView;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
@@ -99,11 +97,12 @@ public class SearchActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         articles = new ArrayList<>();
-        articleAdapter = new ArticleAdapter(this, articles);
+        //articleAdapter = new ArticleAdapter(this, articles);
+        mComplexRecyclerViewArticleAdapter = new ComplexRecyclerViewArticleAdapter(this, articles);
 
         // First param is number of columns and second param is orientation i.e Vertical or Horizontal
         StaggeredGridLayoutManager gridLayoutManager =
-                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+                new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
 
         articlesRecyclerView.addOnScrollListener(
                 new EndlessRecyclerViewScrollListener(gridLayoutManager) {
@@ -115,8 +114,12 @@ public class SearchActivity extends AppCompatActivity {
                     }
                 });
 
+//        articlesRecyclerView.addItemDecoration(
+//                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+
         //articlesGridView.setAdapter(articleAdapter);
-        articlesRecyclerView.setAdapter(articleAdapter);
+        //articlesRecyclerView.setAdapter(articleAdapter);
+        articlesRecyclerView.setAdapter(mComplexRecyclerViewArticleAdapter);
 
         // Set layout manager to position the items
         // Attach the layout manager to the recycler view
@@ -148,8 +151,10 @@ public class SearchActivity extends AppCompatActivity {
         // For efficiency purposes, notify the adapter of only the elements that got changed
         // curSize will equal to the index of the first element inserted because the list is 0-indexed
         searchArticle(cachedQueryString, offset);
-        int curSize = articleAdapter.getItemCount();
-        articleAdapter.notifyItemRangeInserted(curSize, articles.size() - 1);
+//        int curSize = articleAdapter.getItemCount();
+//        articleAdapter.notifyItemRangeInserted(curSize, articles.size() - 1);
+        int curSize = mComplexRecyclerViewArticleAdapter.getItemCount();
+        mComplexRecyclerViewArticleAdapter.notifyItemRangeInserted(curSize, articles.size() - 1);
     }
 
 
@@ -189,7 +194,8 @@ public class SearchActivity extends AppCompatActivity {
                         //articleAdapter.
                     }
                 }
-                articleAdapter.notifyDataSetChanged();
+                //articleAdapter.notifyDataSetChanged();
+                mComplexRecyclerViewArticleAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -221,7 +227,8 @@ public class SearchActivity extends AppCompatActivity {
 //                        Toast.LENGTH_LONG).show();
                 //showProgress();
                 articles.clear();
-                articleAdapter.notifyDataSetChanged();
+//                articleAdapter.notifyDataSetChanged();
+                mComplexRecyclerViewArticleAdapter.notifyDataSetChanged();
                 cachedQueryString = query;
                 searchArticle(query, 0);
                 //hideProgress();
