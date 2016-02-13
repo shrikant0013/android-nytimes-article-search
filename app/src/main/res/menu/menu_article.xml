@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.shrikant.nytimesarticleview.ArticleActivity">
+
+    <item
+        android:id="@+id/menu_article_share"
+        app:showAsAction="ifRoom"
+        android:title="@string/share_text"
+        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"/>
+
+</menu>

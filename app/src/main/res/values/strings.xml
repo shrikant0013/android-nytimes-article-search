@@ -20,5 +20,7 @@
         <item>Oldest</item>
         <item>Newest</item>
     </string-array>
+    <string name="title_activity_article">Read More..</string>
+    <string name="share_text">Share</string>
 
 </resources>

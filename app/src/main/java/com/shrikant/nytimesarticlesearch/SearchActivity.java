@@ -7,7 +7,10 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
@@ -22,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,6 +121,18 @@ public class SearchActivity extends AppCompatActivity {
         // Set layout manager to position the items
         // Attach the layout manager to the recycler view
         articlesRecyclerView.setLayoutManager(gridLayoutManager);
+
+        if (!isNetworkAvailable()) {
+            Toast.makeText(getApplicationContext(), "Opps looks like network connectivity problem",
+                        Toast.LENGTH_LONG).show();
+            //TODO launch activity and show failure droid
+        }
+
+        if (!isOnline()) {
+            Toast.makeText(getApplicationContext(), "Your device is not online, " +
+                            "I won't be able to fetch articles for you!",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     //TODO implement this
@@ -292,5 +308,23 @@ public class SearchActivity extends AppCompatActivity {
         requestParams.put(QUERY, searchText);
 
         return requestParams;
+    }
+
+    private Boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+    }
+
+    private boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int     exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        } catch (IOException e)          { e.printStackTrace(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+        return false;
     }
 }
