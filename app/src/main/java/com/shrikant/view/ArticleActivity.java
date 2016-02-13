@@ -1,6 +1,6 @@
-package com.shrikant.nytimesarticleview;
+package com.shrikant.view;
 
-import com.shrikant.nytimesarticlesearch.R;
+import com.shrikant.search.R;
 
 import android.content.Intent;
 import android.os.Bundle;

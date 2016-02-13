@@ -1,4 +1,4 @@
-package com.shrikant.nytimesarticlesearch;
+package com.shrikant.search;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

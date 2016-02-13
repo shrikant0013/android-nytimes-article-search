@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.shrikant.nytimesarticleview.ArticleActivity">
+    tools:context="com.shrikant.view.ArticleActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

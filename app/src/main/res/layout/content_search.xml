@@ -12,7 +12,7 @@
         android:padding="2dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:showIn="@layout/activity_search"
-        tools:context="com.shrikant.nytimesarticlesearch.SearchActivity">
+        tools:context="com.shrikant.search.SearchActivity">
 <!--
         <EditText
             android:layout_width="wrap_content"
