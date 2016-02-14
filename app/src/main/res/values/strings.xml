@@ -1,11 +1,12 @@
 <resources>
-    <string name="app_name">News Article Search</string>
+    <string name="app_name">newzz</string>
+    <string name="title_activity_search">News Article Search</string>
     <string name="action_settings">Settings</string>
     <string name="search">Search</string>
     <string name="search_hint">Enter search keyword</string>
     <string name="article_text">Latest News</string>
     <string name="search_filter">Filter</string>
-    <string name="title_activity_fragment_search_filter">"Search Filter "</string>
+    <string name="title_activity_fragment_search_filter">Search Filter</string>
     <string name="due_date">Begin Date</string>
     <string name="begin_date">Begin Date</string>
     <string name="sort_order">Sort Order</string>

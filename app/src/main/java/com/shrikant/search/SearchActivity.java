@@ -12,7 +12,6 @@ import com.loopj.android.http.TextHttpResponseHandler;
 import com.shrikant.modal.Article;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -99,6 +98,7 @@ public class SearchActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
+        setTitle("News Article Search");
 
         articles = new ArrayList<>();
         mComplexRecyclerViewArticleAdapter = new ComplexRecyclerViewArticleAdapter(this, articles);
@@ -163,12 +163,13 @@ public class SearchActivity extends AppCompatActivity {
             public void onSuccess(int statusCode, Header[] headers, String response) {
                 if (response != null) {
                     Gson gson = new GsonBuilder().create();
-                    JsonObject jsonObject =  gson.fromJson(response, JsonObject.class);
+                    JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
                     if (jsonObject.has(RESPONSE)) {
                         JsonObject jsonResponseObject = jsonObject.getAsJsonObject(RESPONSE);
                         if (jsonResponseObject != null) {
                             JsonArray jsonDocsArray = jsonResponseObject.getAsJsonArray(DOCS);
-                            Type collectionType = new TypeToken<List<Article>>() {}.getType();
+                            Type collectionType = new TypeToken<List<Article>>() {
+                            }.getType();
 
                             List<Article> fetchedArticles = gson.fromJson(jsonDocsArray,
                                     collectionType);
@@ -257,10 +258,6 @@ public class SearchActivity extends AppCompatActivity {
         searchFilterDialog.show(fm, "filter");
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    }
-
     public RequestParams constructQueryRequestParams(String searchText, int pageNumber) {
         RequestParams requestParams = new RequestParams();
         requestParams.put(API_KEY, KEY);
@@ -311,5 +308,11 @@ public class SearchActivity extends AppCompatActivity {
             return (exitValue == 0);
         } catch (InterruptedException | IOException e) { e.printStackTrace(); }
         return false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setTitle("News Article Search");
     }
 }
