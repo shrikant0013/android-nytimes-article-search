@@ -46,6 +46,7 @@ public class ThumbnailArticleViewHolder extends RecyclerView.ViewHolder
 
         Intent i = new Intent(mContext, ArticleActivity.class);
         i.putExtra("webUrl", article.webUrl);
+       // i.putExtra(ArticleActivity.PARENT_NAME_EXTRA, "SearchActivity");
         mContext.startActivity(i);
     }
 

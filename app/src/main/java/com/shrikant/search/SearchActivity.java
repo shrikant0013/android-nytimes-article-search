@@ -53,10 +53,9 @@ public class SearchActivity extends AppCompatActivity {
     public final static String WEB_URL = "web_url";
     private final static String KEY = "24c318449f40e9695d3ff025f7cf7ba1:11:54196591";
 
-    String cachedQueryString = "";
+    public static String cachedQueryString = "new york times";
 
     ArrayList<Article> articles;
-    //ArticleAdapter articleAdapter;
     ComplexRecyclerViewArticleAdapter mComplexRecyclerViewArticleAdapter;
 
     enum SortOrder {
@@ -102,13 +101,11 @@ public class SearchActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         articles = new ArrayList<>();
-        //articleAdapter = new ArticleAdapter(this, articles);
         mComplexRecyclerViewArticleAdapter = new ComplexRecyclerViewArticleAdapter(this, articles);
 
         // First param is number of columns and second param is orientation i.e Vertical or Horizontal
         StaggeredGridLayoutManager gridLayoutManager =
                 new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
-
         articlesRecyclerView.addOnScrollListener(
                 new EndlessRecyclerViewScrollListener(gridLayoutManager) {
                     @Override
@@ -121,9 +118,6 @@ public class SearchActivity extends AppCompatActivity {
 
 //        articlesRecyclerView.addItemDecoration(
 //                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
-
-        //articlesGridView.setAdapter(articleAdapter);
-        //articlesRecyclerView.setAdapter(articleAdapter);
         articlesRecyclerView.setAdapter(mComplexRecyclerViewArticleAdapter);
 
         // Set layout manager to position the items
@@ -134,12 +128,12 @@ public class SearchActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Opps looks like network connectivity problem",
                         Toast.LENGTH_LONG).show();
             //TODO launch activity and show failure droid
-        }
-
-        if (!isOnline()) {
+        } else if (!isOnline()) {
             Toast.makeText(getApplicationContext(), "Your device is not online, " +
-                            "I won't be able to fetch articles for you!",
+                            "check wifi and try again!",
                     Toast.LENGTH_LONG).show();
+        } else {
+            searchArticle(cachedQueryString, 0);
         }
     }
 
@@ -152,75 +146,57 @@ public class SearchActivity extends AppCompatActivity {
         // Send an API request to retrieve appropriate data using the offset value as a parameter.
         // Deserialize API response and then construct new objects to append to the adapter
         // Add the new objects to the data source for the adapter
-        //items.addAll(moreItems);
         // For efficiency purposes, notify the adapter of only the elements that got changed
         // curSize will equal to the index of the first element inserted because the list is 0-indexed
         searchArticle(cachedQueryString, offset);
-//        int curSize = articleAdapter.getItemCount();
-//        articleAdapter.notifyItemRangeInserted(curSize, articles.size() - 1);
         int curSize = mComplexRecyclerViewArticleAdapter.getItemCount();
         mComplexRecyclerViewArticleAdapter.notifyItemRangeInserted(curSize, articles.size() - 1);
     }
 
-
-    //@OnClick(R.id.btSearch)
-    //public void searchArticle(View view) {
-    public void searchArticle(String query, int page) {
-
-        Log.i("SEARCHACTIVITY", "beginDate: " + FilterAttributes.beginDate + "sortoder" +
-                FilterAttributes.sortOrder.toString());
-
-        for (NewsDesk n :  FilterAttributes.newsDesks) {
-            Log.i("SEARCHACTIVITY", "News desk: " + n.toString());
-        }
-
-        //articles = new ArrayList<>();
-        //articleAdapter.clear();
-
-        //String searchText = searchEditText.getText().toString();
-        String searchText = query;
-
-        Log.i("SEARCHACTIVITY", "Search text: " + searchText);
+    public void searchArticle(String searchText, int page) {
+        Log.i("SearchActivity", "Search text is " + searchText);
 
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
         RequestParams requestParams = constructQueryRequestParams(searchText, page);
         asyncHttpClient.get(NYTIMES_URL, requestParams, new TextHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String response) {
-                Log.i("SEARCHACTIVITY", "Inside success callback");
                 if (response != null) {
-                    Log.i("SEARCHACTIVITY", "Got response");
-                    //JSONObject jsonResponseObject = response.optJSONObject(RESPONSE);
                     Gson gson = new GsonBuilder().create();
                     JsonObject jsonObject =  gson.fromJson(response, JsonObject.class);
                     if (jsonObject.has(RESPONSE)) {
                         JsonObject jsonResponseObject = jsonObject.getAsJsonObject(RESPONSE);
                         if (jsonResponseObject != null) {
-                            //JSONArray jsonDocsArray = jsonResponseObject.optJSONArray(DOCS);
-                            //articles.clear();
-                            if (jsonResponseObject.has(DOCS)) {
-                                JsonArray jsonDocsArray = jsonResponseObject.getAsJsonArray(DOCS);
-                                Type collectionType = new TypeToken<List<Article>>() {
-                                }.getType();
+                            JsonArray jsonDocsArray = jsonResponseObject.getAsJsonArray(DOCS);
+                            Type collectionType = new TypeToken<List<Article>>() {}.getType();
 
-                                List<Article> fetchedArticles = gson.fromJson(jsonDocsArray,
-                                        collectionType);
-                                //articles.addAll(Article.fromJSONArray(jsonDocsArray));
-                                articles.addAll(fetchedArticles);
-                                Log.i("SEARCHACTIVITY", "articles found:" + articles.size());
-                                //articleAdapter.
-                            }
+                            List<Article> fetchedArticles = gson.fromJson(jsonDocsArray,
+                                    collectionType);
+                            articles.addAll(fetchedArticles);
+                            Log.i("SearchActivity", articles.size() + " articles found");
                         }
                     }
                 }
-                //articleAdapter.notifyDataSetChanged();
                 mComplexRecyclerViewArticleAdapter.notifyDataSetChanged();
             }
+
             @Override
             public void onFailure(int statusCode, Header[] headers, String response,
                                   Throwable throwable) {
-                Log.w("ASYNC FAILURE", "HTTP Request failure: " + statusCode + " " +
+                Log.w("AsyncHttpClient", "HTTP Request failure: " + statusCode + " " +
                         throwable.getMessage());
+
+                if (!isNetworkAvailable()) {
+                    Toast.makeText(getApplicationContext(), "Opps looks like " +
+                                    "network connectivity problem",
+                            Toast.LENGTH_LONG).show();
+                }
+
+                if (!isOnline()) {
+                    Toast.makeText(getApplicationContext(), "Your device is not online, " +
+                                    "check wifi and try again!",
+                            Toast.LENGTH_LONG).show();
+                }
 
             }
         });
@@ -242,15 +218,10 @@ public class SearchActivity extends AppCompatActivity {
                 // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
                 // see https://code.google.com/p/android/issues/detail?id=24599
 
-//                Toast.makeText(getApplicationContext(), "Search entered: " + query,
-//                        Toast.LENGTH_LONG).show();
-                //showProgress();
                 articles.clear();
-//                articleAdapter.notifyDataSetChanged();
                 mComplexRecyclerViewArticleAdapter.notifyDataSetChanged();
                 cachedQueryString = query;
                 searchArticle(query, 0);
-                //hideProgress();
                 searchView.clearFocus();
                 return true;
             }
@@ -269,15 +240,7 @@ public class SearchActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
 
-
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//
-//            Toast.makeText(getApplicationContext(), "Settings clicked", Toast.LENGTH_SHORT).show();
-//            return true;
-//        }
         if (id == R.id.action_search_filter) {
 
             Toast.makeText(getApplicationContext(), "Filter clicked", Toast.LENGTH_SHORT).show();
@@ -296,8 +259,6 @@ public class SearchActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i("SEARCHACTIVITY", "Starting back");
-        Toast.makeText(this, "Back to activity", Toast.LENGTH_SHORT).show();
     }
 
     public RequestParams constructQueryRequestParams(String searchText, int pageNumber) {
@@ -324,7 +285,6 @@ public class SearchActivity extends AppCompatActivity {
             }
 
             newsDeskBuilder.append(")");
-            //news_desk:(
             requestParams.put(NY_NEWS_DESK, newsDeskBuilder.toString());
         }
 
@@ -349,8 +309,7 @@ public class SearchActivity extends AppCompatActivity {
             Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
             int     exitValue = ipProcess.waitFor();
             return (exitValue == 0);
-        } catch (IOException e)          { e.printStackTrace(); }
-        catch (InterruptedException e) { e.printStackTrace(); }
+        } catch (InterruptedException | IOException e) { e.printStackTrace(); }
         return false;
     }
 }

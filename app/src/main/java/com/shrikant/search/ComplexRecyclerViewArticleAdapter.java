@@ -1,7 +1,7 @@
 package com.shrikant.search;
 
+import com.bumptech.glide.Glide;
 import com.shrikant.modal.Article;
-import com.squareup.picasso.Picasso;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -98,7 +98,9 @@ public class ComplexRecyclerViewArticleAdapter extends RecyclerView.Adapter<Recy
 
         viewHolder.ivArticle.setImageResource(0); //clearoff
         if (!TextUtils.isEmpty(article.getArticleThumbnailUrl())) {
-            Picasso.with(mContext).load(article.getArticleThumbnailUrl()).into(viewHolder.ivArticle);
+            Glide.with(mContext).load(article.getArticleThumbnailUrl())
+                    .placeholder(R.mipmap.ic_wifi)
+                    .into(viewHolder.ivArticle);
         }
         viewHolder.tvArticle.setText(article.getHeadline().getMain());
     }
