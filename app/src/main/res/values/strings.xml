@@ -18,8 +18,8 @@
     <string name="checkbox_arts">Arts</string>
 
     <string-array name="sortorder_array">
-        <item>Oldest</item>
         <item>Newest</item>
+        <item>Oldest</item>
     </string-array>
     <string name="title_activity_article">Read More..</string>
     <string name="share_text">Share</string>

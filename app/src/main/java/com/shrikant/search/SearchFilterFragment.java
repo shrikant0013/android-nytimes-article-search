@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -100,7 +99,7 @@ public class SearchFilterFragment extends DialogFragment {
                         .getText().toString();
                 updateNewsDesk();
                 updateSortOrder();
-                Toast.makeText(getActivity(), "Save clicked", Toast.LENGTH_SHORT).show();
+                ((SearchActivity)getActivity()).reSearch();
                 dismiss();
             }
         });
@@ -108,7 +107,6 @@ public class SearchFilterFragment extends DialogFragment {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "Cancel clicked", Toast.LENGTH_SHORT).show();
                 dismiss();
             }
         });
@@ -160,6 +158,7 @@ public class SearchFilterFragment extends DialogFragment {
     }
 
     private void updateSortOrder() {
+
         SearchActivity.FilterAttributes.sortOrder =
                 sortLookUp.get(spinnerSortOrder.getSelectedItemId());
     }

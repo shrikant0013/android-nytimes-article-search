@@ -203,6 +203,12 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
+    public void reSearch() {
+        articles.clear();
+        mComplexRecyclerViewArticleAdapter.notifyDataSetChanged();
+        searchArticle(cachedQueryString, 0);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -232,7 +238,7 @@ public class SearchActivity extends AppCompatActivity {
                 return false;
             }
         });
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -246,9 +252,8 @@ public class SearchActivity extends AppCompatActivity {
 
             Toast.makeText(getApplicationContext(), "Filter clicked", Toast.LENGTH_SHORT).show();
             launchFilterDialog();
-            return true;
+            //return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
