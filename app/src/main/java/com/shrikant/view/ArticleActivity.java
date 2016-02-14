@@ -21,9 +21,6 @@ import butterknife.ButterKnife;
 
 public class ArticleActivity extends AppCompatActivity {
 
-    public static final String PACKAGE_NAME = "com.shrikant.search.";
-    public static final String PARENT_NAME_EXTRA = "SearchActivity";
-
     @Bind(R.id.wvArticle) WebView articleWebView;
     private String currentUrl ="";
 
@@ -86,21 +83,4 @@ public class ArticleActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-//    @Override
-//    public Intent getSupportParentActivityIntent() {
-//        // Extract the class name of our parent
-//        Intent parentIntent = getIntent();
-//        String className = parentIntent.getStringExtra(PARENT_NAME_EXTRA);
-//        // Create intent based on the parent class name
-//        Intent newIntent = null;
-//        try {
-//            //you need to define the class with package name
-//            newIntent = new Intent(this, Class.forName(PACKAGE_NAME + className));
-//        } catch (ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        // Return the created intent as the "up" activity
-//        return newIntent;
-//    }
 }

@@ -45,11 +45,6 @@ public class TextArticleViewHolder extends RecyclerView.ViewHolder
 
         Intent i = new Intent(mContext, ArticleActivity.class);
         i.putExtra("webUrl", article.webUrl);
-//        SearchActivity searchActivity = (SearchActivity)mContext;
-////        Log.i("TextArticleViewHolder", SearchActivity.cachedQueryString);
-////        //i.putExtra("searchText", mContext.)
-////        i.putExtra(ArticleActivity.PARENT_NAME_EXTRA, "SearchActivity");
-
         mContext.startActivity(i);
     }
 

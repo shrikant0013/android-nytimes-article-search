@@ -42,19 +42,6 @@ public class SearchFilterFragment extends DialogFragment {
         sortLookUp.put(1L, SearchActivity.SortOrder.OLDEST);
     }
 
-//    public static SearchFilterFragment newInstance(String itemName, String dueDate, String priority,
-//                                               int position, ItemsAdapter itemsAdapter) {
-//        SearchFilterFragment frag = new SearchFilterFragment();
-//        Bundle args = new Bundle();
-//        args.putString("itemName", itemName);
-//        args.putString("dueDate", dueDate);
-//        args.putString("priority", priority);
-//        frag.setArguments(args);
-//        frag.position = position;
-//        frag.itemsAdapter = itemsAdapter;
-//        return frag;
-//    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -132,7 +119,6 @@ public class SearchFilterFragment extends DialogFragment {
                 android.support.v4.app.DialogFragment newFragment = new DatePickerFragment();
                 newFragment.setTargetFragment(SearchFilterFragment.this, 300);
                 newFragment.show(getFragmentManager(), "datePicker");
-                //dismiss();
             }
         });
     }

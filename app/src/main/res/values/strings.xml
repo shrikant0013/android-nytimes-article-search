@@ -22,6 +22,4 @@
     </string-array>
     <string name="title_activity_article">Read More..</string>
     <string name="share_text">Share</string>
-    <string name="title_activity_internet_error">InternetErrorActivity</string>
-
 </resources>
