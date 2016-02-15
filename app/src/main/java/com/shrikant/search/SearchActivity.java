@@ -144,7 +144,7 @@ public class SearchActivity extends AppCompatActivity {
     // This method probably sends out a network request and appends new data items to your adapter.
     public void customLoadMoreDataFromApi(int offset) {
         offset = offset % 100;
-        Toast.makeText(this, "Loading more .. pages " + offset, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Loading more...", Toast.LENGTH_SHORT).show();
         // Send an API request to retrieve appropriate data using the offset value as a parameter.
         // Deserialize API response and then construct new objects to append to the adapter
         // Add the new objects to the data source for the adapter
@@ -260,10 +260,7 @@ public class SearchActivity extends AppCompatActivity {
 
         int id = item.getItemId();
         if (id == R.id.action_search_filter) {
-
-            Toast.makeText(getApplicationContext(), "Filter clicked", Toast.LENGTH_SHORT).show();
             launchFilterDialog();
-            //return true;
         }
         return super.onOptionsItemSelected(item);
     }
