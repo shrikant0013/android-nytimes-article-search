@@ -8,8 +8,8 @@
         android:id="@+id/ivArticle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher"
-        android:background="#FFFFFF"
+        android:src="@mipmap/ic_wifi"
+        android:background="@color/white"
         android:adjustViewBounds="true"
         android:scaleType="fitXY"/>
     <TextView
@@ -20,5 +20,5 @@
         android:ellipsize="end"
         android:text="@string/article_text"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:background="#FFFFFF"/>
+        android:background="@color/white"/>
 </LinearLayout>

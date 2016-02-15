@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -106,6 +107,7 @@ public class SearchActivity extends AppCompatActivity {
         // First param is number of columns and second param is orientation i.e Vertical or Horizontal
         StaggeredGridLayoutManager gridLayoutManager =
                 new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
+        gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
         articlesRecyclerView.addOnScrollListener(
                 new EndlessRecyclerViewScrollListener(gridLayoutManager) {
                     @Override
@@ -161,22 +163,31 @@ public class SearchActivity extends AppCompatActivity {
         asyncHttpClient.get(NYTIMES_URL, requestParams, new TextHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String response) {
-                if (response != null) {
-                    Gson gson = new GsonBuilder().create();
-                    JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
-                    if (jsonObject.has(RESPONSE)) {
-                        JsonObject jsonResponseObject = jsonObject.getAsJsonObject(RESPONSE);
-                        if (jsonResponseObject != null) {
-                            JsonArray jsonDocsArray = jsonResponseObject.getAsJsonArray(DOCS);
-                            Type collectionType = new TypeToken<List<Article>>() {
-                            }.getType();
 
-                            List<Article> fetchedArticles = gson.fromJson(jsonDocsArray,
-                                    collectionType);
-                            articles.addAll(fetchedArticles);
-                            Log.i("SearchActivity", articles.size() + " articles found");
+                try {
+                    if (response != null) {
+                        Gson gson = new GsonBuilder().create();
+                        JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
+                        if (jsonObject.has(RESPONSE)) {
+                            JsonObject jsonResponseObject = jsonObject.getAsJsonObject(RESPONSE);
+                            if (jsonResponseObject != null) {
+                                JsonArray jsonDocsArray = jsonResponseObject.getAsJsonArray(DOCS);
+                                Type collectionType = new TypeToken<List<Article>>() {
+                                }.getType();
+
+                                List<Article> fetchedArticles = gson.fromJson(jsonDocsArray,
+                                        collectionType);
+                                articles.addAll(fetchedArticles);
+                                Log.i("SearchActivity", articles.size() + " articles found");
+                            }
                         }
                     }
+                } catch (JsonSyntaxException e) {
+                    Log.w("AsyncHttpClient", "Exception while parsing json " + e.getMessage());
+                    Toast.makeText(getApplicationContext(), "Opps looks like " +
+                                    "some problem, try searching again",
+                            Toast.LENGTH_SHORT).show();
+
                 }
                 mComplexRecyclerViewArticleAdapter.notifyDataSetChanged();
             }
