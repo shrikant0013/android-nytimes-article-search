@@ -39,7 +39,11 @@ The following **bonus** features are implemented:
 Here's a walkthrough of implemented user stories:
 
 <img src='http://i.imgur.com/46AjRVO.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
-<a href='http://i.imgur.com/46AjRVO.gif'>Video Walkthrough</a>
+
+
+<a href='http://i.imgur.com/46AjRVO.gif'>Video Walkthrough direct link</a>
+
+![alt tag](http://i.imgur.com/46AjRVO.gif)
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
