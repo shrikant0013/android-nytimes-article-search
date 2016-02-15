@@ -49,6 +49,8 @@ public class SearchFilterFragment extends DialogFragment {
         View rootView = inflater.inflate(R.layout.fragment_search_filter, container, false);
         ButterKnife.bind(this, rootView);
 
+        getDialog().setTitle("Filter Search by");
+
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.sortorder_array, android.R.layout.simple_spinner_item);

@@ -86,7 +86,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/checkbox_sports"
-                android:drawableLeft="@mipmap/ic_sports"
+                android:drawableLeft="@mipmap/ic_ball"
                 />
         </LinearLayout>
 
