@@ -40,6 +40,8 @@ Here's a walkthrough of implemented user stories:
 
 <img src='http://i.imgur.com/46AjRVO.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
+![Alt text](nytimes-search.gif?raw=true "Video Walkthrough")
+
 
 <a href='http://i.imgur.com/46AjRVO.gif'>Video Walkthrough direct link</a>
 
